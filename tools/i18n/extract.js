@@ -1,6 +1,8 @@
 const fs=require('fs');const {chromium}=require('playwright');
 const html=fs.readFileSync(require('path').resolve(__dirname,'../../index.html'),'utf8');
-const js=html.slice(html.lastIndexOf('<script>')+8,html.lastIndexOf('</script>'));
+const teamJs=require('path').resolve(__dirname,'../../team.js');
+// codice dell'app più team.js (sezione Squadra di MyTurn Business, caricata a parte)
+const js=html.slice(html.lastIndexOf('<script>')+8,html.lastIndexOf('</script>'))+'\n'+(fs.existsSync(teamJs)?fs.readFileSync(teamJs,'utf8'):'');
 const keys=new Map();const add=(k,src)=>{if(!k||!/[A-Za-zÀ-ÿ]/.test(k))return;if(!keys.has(k))keys.set(k,src);};
 // parse string literal at i (double or single quote)
 function lit(s,i){const q=s[i];let j=i+1,out="";while(j<s.length&&s[j]!==q){if(s[j]==="\\"){out+=s[j+1];j+=2;continue;}out+=s[j];j++;}return [out,j+1];}

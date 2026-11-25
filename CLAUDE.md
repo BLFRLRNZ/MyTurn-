@@ -36,7 +36,8 @@ Questo file serve a riprendere il lavoro sul progetto in una chat nuova. Va lett
 | `version.json` | Versione, data e note di rilascio (it, en, fr, de, es, pt). L'app la usa per proporre l'aggiornamento. |
 | `supabase/` | Server: tabelle (`migrations/`), funzioni (`functions/`) e istruzioni (`README.md`). |
 | `docs/` | `CONTROLLO-FESTIVITA.md` (verifica delle festività), `BUSTE-PAGA.md` (come vengono lette le buste paga). |
-| `ROADMAP.md` | Roadmap dell'internazionalizzazione, tutta completata (2.0). La roadmap del prodotto (fasi 1–4 contro i concorrenti) è nel documento "MyTurn – Roadmap" su Claude. |
+| `ROADMAP.md` | Roadmap dell'internazionalizzazione, tutta completata (2.0). La roadmap del prodotto (fasi 1–4 contro i concorrenti) è nel documento "MyTurn – Roadmap" su Claude; il progetto della versione aziendale nel documento "MyTurn Business – Progetto" (vedi "MyTurn Business"). |
+| `team.js` | MyTurn Business: sezione Squadra del titolare e del responsabile. Si carica solo per chi gestisce un'azienda (vedi "MyTurn Business"). |
 | `package.json`, `capacitor.config.json` | App per gli store con Capacitor 8. `appId` = `app.myturn` (si può cambiare solo prima della prima pubblicazione). |
 | `tools/app/copy-web.js` | Copia in `www/` (ignorata da git) i file che vanno dentro l'app. Il service worker no. |
 | `assets/` | Immagini di partenza per icone e schermata di avvio (le genera `@capacitor/assets` nel workflow). |
@@ -131,6 +132,16 @@ Le opzioni sono `from`, `to`, `skip`, `obs` (`near`, `mon`, `sun`, `sat`, `move`
 - Quello che le pagine promettono e il codice deve mantenere: dati solo sul dispositivo senza account; sincronizzazione cifrata; promemoria web con i turni dei prossimi 45 giorni; uscendo dall'account si cancellano indirizzo per le notifiche e promemoria futuri (`acLogout`); i promemoria passati si cancellano ogni notte (job `myturn-cleanup` di `pg_cron`, migrazione `20261112140000_pulizia_promemoria.sql`); niente cookie, statistiche, pubblicità o file da server esterni. **Se cambia uno di questi punti, va aggiornata anche l'informativa.**
 - Fornitori citati: Supabase (Supabase Pte. Ltd. e Supabase, Inc.; server a Francoforte), Brevo (Brevo SAS, Parigi), GitHub Pages, servizi push dei browser.
 
+## MyTurn Business (versione per le aziende, nascosta)
+
+- **Progetto** nel documento "MyTurn Business – Progetto" su Claude (ruoli, schermate, cosa vede l'azienda, tappe, decisioni). Decisioni prese il 25 novembre 2026: dentro MyTurn (non un'app a parte); dati dell'azienda sul server **non cifrati**, letti solo da chi ne fa parte; nome **MyTurn Business**; prima la fase 3 della roadmap (azienda), poi i gruppi di colleghi; il progetto delle app modulari per ora resta a parte. Da decidere: azienda pilota, prezzo, timbratura.
+- **Nascosto fino alla 3.0.** Si accende con `?business=1` nell'indirizzo, o aprendo un invito (`?invito=CODICE`, nell'app `myturn://invito/CODICE`), e resta acceso su quel dispositivo (`localStorage["myturn-biz"]`; `?business=0` lo spegne). Le frasi nuove sono **solo in italiano**: si traducono quando si rilascia la 3.0, perché i testi cambieranno dopo le prove del proprietario (`check.py en` le elenca).
+- **Tappa 1 (fatta):** aziende, persone, ruoli e inviti.
+  - In `index.html` (cerca `MyTurn Business, tappa 1`): riga `#coRow` in Impostazioni → Account e pannello `#co` "La mia azienda": le mie aziende (`CO`, da `team_mine`, copia in `myturn-teams`), entrare con il codice (anteprima di cosa vede l'azienda, poi `team_join`), uscire (due tocchi), creare un'azienda. `coTeamLoad()` scarica `team.js` e gli passa le funzioni dell'app (il codice di `index.html` sta dentro una funzione, quindi niente è globale).
+  - In `team.js`: pannello `#tm` "Squadra": elenco delle persone (ha l'app / invitato / senza app), scheda della persona (nome, ruolo, reparto, ore a settimana, ferie e permessi annui), invito con codice di 8 caratteri e link `SITE?invito=CODICE` da condividere, togliere una persona, nome e paese dell'azienda, eliminare l'azienda (due tocchi). Il responsabile gestisce solo i dipendenti; il titolare tutto.
+- **Server** (migrazione `20261125180000_aziende.sql`): tabelle `teams`, `team_members` (chi non ha l'app ha `user_id` vuoto), `team_invites`; RLS solo in lettura (`team_role(team)`); tutte le scritture passano dalle funzioni `team_create`, `team_update`, `team_member_save`, `team_member_remove`, `team_invite`, `team_join_preview`, `team_join`, `team_leave`, `team_delete`, `team_mine`. Provate sul server vero con utenti finti dentro una transazione annullata (24 controlli). Uscendo dall'azienda la persona resta nella squadra senza account né email; l'ultimo titolare con l'app non può uscire né smettere di esserlo.
+- **Prossima tappa (2):** turni della squadra (tabella persone × giorni, bozza e Pubblica, avvisi), che arrivano nel calendario del dipendente. Prima di mostrarla alle aziende: informativa aggiornata e accordo sul trattamento dei dati (DPA), piano a pagamento di Supabase, dominio per le email.
+
 ## Server (Supabase)
 
 - Serve per **accesso** (email e password), **promemoria** (notifiche push prima dei turni) e **sincronizzazione** tra dispositivi.
@@ -208,6 +219,7 @@ I test usano Playwright, che è già installato. Alcuni test leggono file con `f
 | `tests/alarms.js` | Sveglie nell'app con un plugin finto: permesso, anticipo per tipo di turno, aggiornamento quando cambiano i turni, iOS vecchio, permesso negato, Android che concede dopo, niente nella versione web | sì |
 | `tests/holidays-states.js` | Festività di 51 stati USA, 27 stati del Brasile e Terranova e Labrador, data per data dal 2024 al 2045, contro le date attese in `tests/holidays/` | sì |
 | `tests/schedule-import.js` | Foglio dei turni: tabella italiana con legenda, turni con orari in inglese, elenco con turno spezzato, foto storta e sfocata (almeno 90% giusto), busta paga rifiutata, sigle ricordate, annulla, 320 px scuro. File in `tests/schedule/` (rigenerati da `gen.py`, reportlab e PIL) | sì |
+| `tests/business-team.js` | MyTurn Business, tappa 1, con un server finto e tre account: nascosto senza `?business=1`, il titolare crea l'azienda e invita, il dipendente entra dal link (con l'anteprima di cosa vede l'azienda) ed esce, il responsabile non cambia i ruoli, codici sbagliati, senza account, ultimo titolare, 320 px chiaro e scuro | sì |
 | `tests/sync.js` | Sincronizzazione tra due dispositivi con un server finto: password, unione, conflitti, cancellazioni, password dimenticata, niente in chiaro sul server | sì |
 
 - Le buste paga di prova sono in `tests/payslip/`. Si rigenerano con `gen.py`, `gen2.py` e `gen3.py`, che usano reportlab e pypdf.

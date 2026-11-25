@@ -12,8 +12,13 @@ Serve solo a chi sceglie di creare un account. Senza account l'app funziona come
 | `sync_meta` | Per la sincronizzazione: il sale della password e un piccolo testo cifrato per controllarla. |
 | `sync_items` | Per la sincronizzazione: i dati cifrati sul dispositivo (illeggibili per il server), un elemento per giorno o impostazione, con un identificativo anch'esso cifrato. |
 | `app_config` | Chiavi VAPID e segreto del cron. Nessun utente può leggerla: la legge solo il server. |
+| `teams` | MyTurn Business: le aziende (nome, paese, regione). |
+| `team_members` | MyTurn Business: le persone di ogni azienda, con ruolo (titolare, responsabile, dipendente), reparto, ore e ferie. Chi non ha ancora l'app non ha un account collegato. |
+| `team_invites` | MyTurn Business: i codici d'invito, uno per persona, validi 14 giorni e usabili una volta. |
 
 Le regole di accesso (RLS) sono attive su tutte le tabelle: ognuno vede solo le proprie righe. Le scritture passano dalle funzioni `save_push`, `forget_push` e `set_shifts`.
+
+Per MyTurn Business (migrazione `20261125180000_aziende.sql`) i dati dell'azienda **non sono cifrati**: l'azienda la vede chi ne fa parte, le persone le vede tutte chi gestisce (titolare e responsabile) e ognuno la propria riga, gli inviti solo chi gestisce. Le scritture passano dalle funzioni `team_*`, che controllano il ruolo di chi chiama.
 
 ## Funzioni
 

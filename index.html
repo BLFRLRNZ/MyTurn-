@@ -449,6 +449,21 @@ dl.pay .totrow{border-top:1px solid var(--line);padding-top:10px;font-weight:700
 .imprev{max-height:38vh;overflow:auto;border:1px solid var(--line);border-radius:12px;padding:2px 12px;font-size:14px}
 .imprev div{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid var(--line)}.imprev div:last-child{border-bottom:0}
 .imprev .d{min-width:88px;color:var(--muted)}.imprev .skip{opacity:.45;text-decoration:line-through}
+/* MyTurn Business: La mia azienda (#co) e Squadra (#tm, team.js) */
+#coList:not([hidden]),#coBox:not([hidden]),#coNewBox:not([hidden]),#tmBody{display:flex;flex-direction:column;gap:12px}
+.cocard{background:var(--bg);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.cohead{display:flex;align-items:baseline;justify-content:space-between;gap:10px}.cohead b{font-size:16.5px;overflow-wrap:anywhere}
+.cotag{flex:0 0 auto;font:600 11px/1.2 var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.corow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}.corow>.btn{flex:1 1 150px}.corow .linkbtn{align-self:center}
+.cocode{display:flex;gap:8px}.cocode input{flex:1;min-width:0;font:600 18px/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase}.cocode .btn{flex:0 0 auto}
+.coprev{border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px;font-size:14.5px}
+.coprev p{margin:0}.coprev ul{margin:0;padding-left:20px;color:var(--muted);font-size:13.5px;line-height:1.45}
+.tmrow{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 10px;background:var(--bg);border-radius:16px;padding:11px 14px;width:100%}
+.tmrow:focus-visible{outline:2px solid var(--ink);outline-offset:2px}.tmrow b{font-weight:600;overflow-wrap:anywhere}
+.tmrow small{grid-column:1/-1;color:var(--muted);font-size:12.5px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.tmrow small i{width:8px;height:8px;border-radius:50%;background:var(--line);flex:0 0 auto}.tmrow small i.on{background:var(--good)}.tmrow small i.inv{background:var(--warn)}
+.tminv{background:var(--bg);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.tminv .code{font:700 26px/1.1 var(--mono);letter-spacing:.14em}.tminv .help{margin:0}.tminv .corow{width:100%}
 .alhd{display:flex;justify-content:space-between;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);padding:10px 0 2px}
 .altn{display:inline-flex;align-items:center;gap:7px}
 .altn .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
@@ -715,6 +730,7 @@ dl.pay .totrow{border-top:1px solid var(--line);padding-top:10px;font-weight:700
       <h3 class="sect">Account</h3>
       <div class="uprow"><span id="acInfo"></span><button type="button" class="btn" id="acBtn">Accedi</button></div>
       <div class="uprow" id="syRow"><span id="syLine"></span><button type="button" class="btn" id="syBtn">Attiva</button></div>
+      <div class="uprow" id="coRow" hidden><span id="coLine"></span><button type="button" class="btn" id="coBtn">Azienda</button></div>
     </div>
     <h3 class="sect">Aggiornamenti</h3>
     <div class="uprow"><span id="upInfo"></span><button type="button" class="btn" id="upCheck">Cerca aggiornamenti</button></div>
@@ -919,6 +935,31 @@ dl.pay .totrow{border-top:1px solid var(--line);padding-top:10px;font-weight:700
       <p class="sumline" id="alNext" aria-live="polite"></p>
     </div>
     <div class="actions"><button type="submit" class="btn primary" style="flex:1">Fatto</button></div>
+  </form>
+</dialog>
+
+<dialog id="co" aria-labelledby="coTitle">
+  <form class="sheet" id="coForm" method="dialog">
+    <h2 id="coTitle" style="text-transform:none">La mia azienda</h2>
+    <p class="sub">Con MyTurn Business l'azienda ti manda i turni nel calendario e tu le mandi le richieste da qui.</p>
+    <div class="bpst err" id="coNeed" hidden></div>
+    <div id="coList"></div>
+    <div id="coBox">
+      <h3 class="sect">Entra con un codice</h3>
+      <p class="help">Il codice d'invito te lo dà il titolare o il responsabile: 8 lettere e numeri.</p>
+      <div class="cocode"><input type="text" id="coCode" maxlength="11" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-label="Codice d'invito"><button type="button" class="btn" id="coGo">Continua</button></div>
+      <div id="coPrev" hidden></div>
+      <h3 class="sect">Sei il titolare?</h3>
+      <button type="button" class="btn" id="coNewBtn">Crea la tua azienda</button>
+      <div id="coNewBox" hidden>
+        <div class="field"><label class="eyebrow" for="coTeamName">Nome dell'azienda</label><input type="text" id="coTeamName" maxlength="80" autocomplete="organization"></div>
+        <div class="field"><label class="eyebrow" for="coMyName">Il tuo nome</label><input type="text" id="coMyName" maxlength="80" autocomplete="name"></div>
+        <div class="field"><label class="eyebrow" for="coCountry">Paese</label><select id="coCountry"></select></div>
+        <button type="button" class="btn primary" id="coCreate">Crea l'azienda</button>
+      </div>
+    </div>
+    <p class="bpst" id="coStatus" aria-live="polite" hidden></p>
+    <div class="actions"><button type="button" class="btn ghost" id="coClose" style="flex:1">Chiudi</button></div>
   </form>
 </dialog>
 
@@ -1770,7 +1811,7 @@ function lockPage(){if(document.body.classList.contains("locked"))return;lockY=w
 function unlockPage(){if(document.querySelector("dialog[open]")||!document.body.classList.contains("locked"))return;document.body.classList.remove("locked");document.body.style.top="";window.scrollTo(0,lockY);}
 function openDlg(d){lockPage();if(d.open)return;d.tabIndex=-1;d.showModal();d.focus({preventScroll:true});}
 function showField(id){setTimeout(()=>{const el=$(id);if(!el)return;el.scrollIntoView({block:"center",behavior:"smooth"});const f=el.closest(".field")||el;f.classList.remove("flash");void f.offsetWidth;f.classList.add("flash");},120);}
-[$("ed"),$("st"),$("pd"),$("cy"),$("im"),$("sh"),$("tl"),$("rc"),$("pr"),$("lb"),$("wh"),$("lv"),$("hb"),$("py"),$("j2"),$("ic"),$("bp"),$("hp"),$("ac"),$("rm"),$("al"),$("sy")].forEach(dlg=>{dlg.addEventListener("click",ev=>{if(ev.target===dlg)dlg.close();});dlg.addEventListener("close",unlockPage);});
+[$("ed"),$("st"),$("pd"),$("cy"),$("im"),$("sh"),$("tl"),$("rc"),$("pr"),$("lb"),$("wh"),$("lv"),$("hb"),$("py"),$("j2"),$("ic"),$("bp"),$("hp"),$("ac"),$("rm"),$("al"),$("sy"),$("co")].forEach(dlg=>{dlg.addEventListener("click",ev=>{if(ev.target===dlg)dlg.close();});dlg.addEventListener("close",unlockPage);});
 /* niente zoom con due dita o doppio tocco (Safari ignora user-scalable) */
 ["gesturestart","gesturechange","gestureend"].forEach(t=>document.addEventListener(t,ev=>ev.preventDefault(),{passive:false}));
 document.addEventListener("touchmove",ev=>{if(ev.touches.length>1)ev.preventDefault();},{passive:false});
@@ -2432,7 +2473,7 @@ function authResult(r){return r==="ok"?[t("Accesso eseguito. I tuoi dati sono si
   r==="mismatch"?[t("Accesso eseguito. I dati sul server sono protetti da un'altra password: apri Sincronizzazione per ricominciare da questo dispositivo."),"err"]:
   [t("Accesso eseguito, ma la sincronizzazione non è partita. Riprova da Sincronizzazione."),"err"];}
 function renderAccount(){const on=SB_ON();$("acSect").hidden=!on;$("rmBtn").hidden=!on;if(!on)return;
-  $("syRow").hidden=!AU;try{syRender();}catch(e){}
+  $("syRow").hidden=!AU;try{syRender();}catch(e){}try{coRow();}catch(e){}
   $("acInfo").textContent=AU?t("Accesso come {e}",{e:AU.user.email}):t("Nessun account: i dati restano solo su questo dispositivo.");
   $("acBtn").textContent=AU?t("Gestisci"):t("Accedi");
   if(!$("ac").open)return;
@@ -2570,7 +2611,10 @@ if(NATIVE){$("alBtn").hidden=false;setTimeout(()=>alSync(true),2000);
   const alBack=async()=>{alSync(true);if($("al").open){const was=alState;await alCheck();if(alState!==was)alGranted();}};
   document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")alBack();});
   try{if(CAP.App)CAP.App.addListener("resume",alBack);}catch(e){}}
-function openDeep(u){if($("ob").open)return;
+function openDeep(u){
+  /* invito di un'azienda (MyTurn Business): myturn://invito/CODICE */
+  const iv=/^myturn:\/\/invito\/([A-Za-z0-9-]{8,11})/.exec(u||"");if(iv){coInviteFrom(iv[1]);return;}
+  if($("ob").open)return;
   /* dal Centro di Controllo (iPhone): il mese di oggi */
   if(/^myturn:\/\/today/.test(u||"")){document.querySelectorAll("dialog[open]").forEach(d=>d.close());const n=new Date();view=new Date(n.getFullYear(),n.getMonth(),1);if(mode!=="cal")setMode("cal");render();return;}
   const m=/^myturn:\/\/day\/(\d{4}-\d\d-\d\d)/.exec(u||"");if(!m)return;
@@ -2582,6 +2626,111 @@ if(NATIVE&&CAP.App){try{CAP.App.addListener("appUrlOpen",e=>openDeep(e&&e.url));
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")wgSync(true);});
 
 
+
+/* ---------- MyTurn Business, tappa 1: aziende, persone e inviti ----------
+   Progetto nel documento "MyTurn Business – Progetto". Nascosto finché non è pronta la 3.0: si accende con ?business=1
+   o aprendo un invito (?invito=CODICE, myturn://invito/CODICE) e resta acceso su questo dispositivo (myturn-biz).
+   I dati dell'azienda stanno sul server in chiaro (decisione 2), letti solo da chi ne fa parte; tutte le scritture
+   passano dalle funzioni team_* (supabase/migrations/20261125180000_aziende.sql).
+   CO = le mie aziende (team_mine), con una copia in localStorage. La sezione Squadra (team.js) si carica solo per chi gestisce. */
+const BIZ_K="myturn-biz",CO_K="myturn-teams";
+let BIZ=false,CO=[],coInvite="",coPrevData=null,coLeaveArm="",coTeamJs=null;
+const coClean=v=>String(v||"").toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,8);
+const coFmt=c=>c.length>4?c.slice(0,4)+" "+c.slice(4):c;
+try{const q=new URLSearchParams(location.search),iv=coClean(q.get("invito"));
+  if(iv)localStorage.setItem(BIZ_K,"1");else if(q.has("business"))localStorage.setItem(BIZ_K,q.get("business")==="0"?"0":"1");
+  if(iv.length===8)coInvite=iv;
+  if(q.has("invito")||q.has("business")){q.delete("invito");q.delete("business");history.replaceState(null,"",location.pathname+(q.toString()?"?"+q:"")+location.hash);}
+  BIZ=localStorage.getItem(BIZ_K)==="1";CO=JSON.parse(localStorage.getItem(CO_K)||"[]")||[];}catch(e){CO=[];}
+const coRoleName=r=>r==="titolare"?t("Titolare"):r==="responsabile"?t("Responsabile"):t("Dipendente");
+const coManages=c=>!!c&&(c.role==="titolare"||c.role==="responsabile");
+function coSave(){try{localStorage.setItem(CO_K,JSON.stringify(CO));}catch(e){}}
+function coErr(e){const m=String(e&&e.message||"");
+  return /invalid code/.test(m)?t("Codice non valido o scaduto: chiedine uno nuovo a chi ti ha invitato."):
+    /already member/.test(m)?t("Fai già parte di questa azienda."):
+    /already joined/.test(m)?t("Questa persona ha già l'app."):
+    /too many teams/.test(m)?t("Hai raggiunto il numero massimo di aziende."):
+    /team full/.test(m)?t("La squadra ha già 200 persone."):
+    /last owner/.test(m)?t("Sei l'unico titolare con l'app: prima nomina un altro titolare."):
+    /forbidden/.test(m)?t("Non hai i permessi per farlo."):
+    e&&e.status===401?t("Accedi di nuovo all'account e riprova."):
+    t("Non riesco a raggiungere il server. Controlla la connessione e riprova.");}
+function coStat(msg,cls){const e=$("coStatus");e.hidden=!msg;e.className="bpst"+(cls?" "+cls:"");e.textContent=msg||"";}
+async function coLoad(){if(!BIZ||!SB_ON()||!AU)return CO;
+  try{const r=await sbFetch("/rest/v1/rpc/team_mine",{body:{}});CO=Array.isArray(r)?r:[];coSave();}catch(e){}
+  coRender();return CO;}
+/* riga in Impostazioni → Account */
+function coRow(){if(!AU&&CO.length){CO=[];coSave();}
+  const on=BIZ&&SB_ON()&&!!AU;$("coRow").hidden=!on;if(!on)return;
+  $("coLine").textContent=!CO.length?t("Azienda: nessuna"):CO.length===1?t("Azienda: {x}",{x:CO[0].team+" · "+coRoleName(CO[0].role)}):tn(CO.length,"{n} azienda","{n} aziende");}
+function coRender(){coRow();if(!$("co").open)return;const need=!SB_ON()?"off":!AU?"login":"";
+  $("coNeed").hidden=!need;
+  if(need==="login"){$("coNeed").innerHTML=esc(t("Per entrare in un'azienda o crearne una serve l'account MyTurn."))+' <button type="button" class="linkbtn" id="coLogin">'+esc(t("Accedi"))+"</button>";$("coLogin").onclick=()=>{$("co").close();openAccount();};}
+  $("coList").hidden=$("coBox").hidden=!!need;if(need)return;
+  $("coList").innerHTML=CO.map((c,i)=>'<div class="cocard"><div class="cohead"><b>'+esc(c.team)+'</b><span class="cotag">'+esc(coRoleName(c.role))+"</span></div>"+
+    '<p class="help">'+esc([c.name,c.dept,ctryName(c.country)].filter(Boolean).join(" · "))+"</p>"+
+    '<div class="corow">'+(coManages(c)?'<button type="button" class="btn primary" data-open="'+i+'">'+esc(t("Apri la squadra"))+"</button>":"")+
+    '<button type="button" class="linkbtn" data-leave="'+i+'">'+esc(coLeaveArm===c.team_id?t("Tocca di nuovo per uscire"):t("Esci dall'azienda"))+"</button></div></div>").join("");
+  $("coList").querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>coOpenTeam(CO[+b.dataset.open]));
+  $("coList").querySelectorAll("[data-leave]").forEach(b=>b.onclick=()=>coLeave(+b.dataset.leave));
+  /* prima di entrare: chi ti ha invitato e cosa vedrà l'azienda */
+  const d=coPrevData;$("coPrev").hidden=!d;if(!d)return;const B=s=>"<b>"+esc(s)+"</b>";
+  $("coPrev").innerHTML='<div class="coprev"><p>'+t("{team} ti ha aggiunto alla squadra come {name}.",{team:B(d.team),name:B(d.name)})+"</p>"+
+    '<p class="help">'+esc([coRoleName(d.role),d.dept].filter(Boolean).join(" · "))+"</p>"+
+    '<p class="eyebrow">'+esc(t("L'azienda vedrà"))+"</p><ul><li>"+esc(t("il tuo nome e la tua email"))+"</li><li>"+esc(t("i turni che ti assegna e le richieste che le mandi"))+"</li></ul>"+
+    '<p class="eyebrow">'+esc(t("Non vedrà"))+"</p><ul><li>"+esc(t("note, etichette e turni che segni da te"))+"</li><li>"+esc(t("stima paga, busta paga e secondo lavoro"))+"</li></ul>"+
+    '<div class="corow"><button type="button" class="btn primary" id="coJoin">'+esc(t("Entra nell'azienda"))+'</button><button type="button" class="btn ghost" id="coCancel">'+esc(t("Annulla"))+"</button></div></div>";
+  $("coJoin").onclick=coJoin;$("coCancel").onclick=()=>{coPrevData=null;coRender();};}
+function coInviteFrom(c){c=coClean(c);if(c.length!==8)return;coInvite=c;
+  if(!BIZ){BIZ=true;try{localStorage.setItem(BIZ_K,"1");}catch(e){}}
+  const go=()=>{if($("ob").open)return void setTimeout(go,1000);openCo();};setTimeout(go,600);}
+function openCo(){["st","tl","ac"].forEach(id=>{if($(id).open)$(id).close();});coStat("");coPrevData=null;coLeaveArm="";
+  $("coNewBox").hidden=true;$("coNewBtn").hidden=false;if(coInvite)$("coCode").value=coFmt(coInvite);
+  openDlg($("co"));coRender();coLoad();if(coInvite&&AU)coPreview();}
+async function coPreview(){const code=coClean($("coCode").value);
+  if(code.length!==8){coStat(t("Il codice ha 8 caratteri."),"err");return;}
+  coStat(t("Controllo il codice…"));
+  try{const r=await sbFetch("/rest/v1/rpc/team_join_preview",{body:{p_code:code}});coPrevData=Object.assign({code},r||{});coStat("");}
+  catch(e){coPrevData=null;coStat(coErr(e),"err");}
+  coRender();}
+async function coJoin(){const d=coPrevData;if(!d)return;coStat(t("Entro nell'azienda…"));
+  try{await sbFetch("/rest/v1/rpc/team_join",{body:{p_code:d.code}});coPrevData=null;coInvite="";$("coCode").value="";await coLoad();
+    coStat(t("Sei entrato in {x}. Quando pubblica i turni, li trovi nel tuo calendario.",{x:d.team}),"ok");}
+  catch(e){coStat(coErr(e),"err");}
+  coRender();}
+async function coLeave(i){const c=CO[i];if(!c)return;
+  if(coLeaveArm!==c.team_id){coLeaveArm=c.team_id;coRender();setTimeout(()=>{if(coLeaveArm===c.team_id){coLeaveArm="";coRender();}},5000);return;}
+  coLeaveArm="";coStat(t("Esco dall'azienda…"));
+  try{await sbFetch("/rest/v1/rpc/team_leave",{body:{p_team:c.team_id}});await coLoad();coStat(t("Sei uscito da {x}. I turni che hai già restano nel calendario.",{x:c.team}),"ok");}
+  catch(e){coStat(coErr(e),"err");}
+  coRender();}
+function coNewOpen(){$("coNewBtn").hidden=true;$("coNewBox").hidden=false;const s=S.settings;
+  $("coCountry").innerHTML=Object.keys(CTRYS).map(c=>[c,ctryName(c)]).sort((a,b)=>a[1].localeCompare(b[1],LOC)).map(([v,l])=>'<option value="'+esc(v)+'"'+(v===s.country?" selected":"")+">"+esc(l)+"</option>").join("");
+  if(!$("coMyName").value&&CO[0])$("coMyName").value=CO[0].name;}
+async function coCreate(){const name=$("coTeamName").value.trim(),me=$("coMyName").value.trim(),country=$("coCountry").value;
+  if(!name){coStat(t("Scrivi il nome dell'azienda."),"err");showField("coTeamName");return;}
+  coStat(t("Creo l'azienda…"));
+  try{const id=await sbFetch("/rest/v1/rpc/team_create",{body:{p_name:name,p_country:country,p_region:country===S.settings.country&&S.settings.region||null,p_my_name:me||null}});
+    $("coTeamName").value="";$("coNewBox").hidden=true;$("coNewBtn").hidden=false;await coLoad();
+    coStat(t("Azienda creata. Ora aggiungi le persone della squadra."),"ok");const c=CO.find(x=>x.team_id===id);if(c)coOpenTeam(c,true);}
+  catch(e){coStat(coErr(e),"err");}}
+/* la sezione Squadra sta in team.js: si scarica solo per chi gestisce un'azienda */
+function coTeamLoad(){
+  if(!coTeamJs)coTeamJs=new Promise((ok,ko)=>{const s=document.createElement("script");s.src="team.js?v="+APP_VERSION;
+    s.onload=()=>{try{ok(window.MyTurnTeamInit({t,tn,esc,sbFetch,openDlg,unlockPage,toast,ctryName,coLoad,coErr,coFmt,coRoleName,SITE,NATIVE,CAP,loc:()=>LOC,ctrys:()=>CTRYS}));}catch(e){coTeamJs=null;ko(e);}};
+    s.onerror=()=>{coTeamJs=null;s.remove();ko(new Error("team.js"));};document.head.appendChild(s);});
+  return coTeamJs;}
+async function coOpenTeam(c,fresh){if(!c)return;
+  try{const T=await coTeamLoad();if($("co").open)$("co").close();T.open(c,fresh);}
+  catch(e){coStat(t("Non riesco ad aprire la squadra. Controlla la connessione e riprova."),"err");}}
+$("coBtn").onclick=openCo;$("coClose").onclick=()=>$("co").close();
+$("coGo").onclick=coPreview;$("coCode").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();coPreview();}});
+$("coCode").addEventListener("input",()=>{const v=coClean($("coCode").value),f=coFmt(v);if($("coCode").value!==f)$("coCode").value=f;if(coPrevData&&coPrevData.code!==v){coPrevData=null;coRender();}});
+$("coNewBtn").onclick=coNewOpen;$("coCreate").onclick=coCreate;
+/* dopo l'accesso, un invito in sospeso riapre La mia azienda */
+$("ac").addEventListener("close",()=>{if(BIZ&&coInvite&&AU)setTimeout(openCo,250);});
+if(coInvite)coInviteFrom(coInvite);
+coRow();if(BIZ&&AU)setTimeout(coLoad,1500);
 
 /* ---------- sincronizzazione tra dispositivi (cifrata sul dispositivo) ----------
    Ogni dato è un "elemento": d|giorno, o|reperibilità, j|secondo lavoro, b|busta paga, s impostazioni.
@@ -3323,7 +3472,7 @@ function obStart(){OB.existing=Object.keys(S.days).length>0||!!S.settings.labels
   OB.wd=S.settings.wd;OB.sat=S.settings.sat;OB.step=0;OB.q="";obRender();openDlg($("ob"));
   if(OB.lang!==LANG)setLang(OB.lang).then(obRender);}
 
-window.myturnDebug={remItems,wgData,syItems,syHash,syRun:()=>syRun(),S,apply,mark,startTour,tn,t,bpLines,bpParse,bpNum,bpSplit,imParse,imPlan,imOcr,imRefine,imCanvas,imPrep,imDeskew,imLines,imHeader,imCell,imPdfPages,holFor:(c,y,r)=>{const o=[S.settings.country,S.settings.region,S.settings.patron];S.settings.country=c;S.settings.region=r||"";S.settings.patron=null;const h=holidays(y);[S.settings.country,S.settings.region,S.settings.patron]=o;return h;},holidays,ruleDate,easterO,RULES:()=>RULES,WS:()=>WS};
+window.myturnDebug={coLoad,coOpenTeam,CO:()=>CO,BIZ:()=>BIZ,remItems,wgData,syItems,syHash,syRun:()=>syRun(),S,apply,mark,startTour,tn,t,bpLines,bpParse,bpNum,bpSplit,imParse,imPlan,imOcr,imRefine,imCanvas,imPrep,imDeskew,imLines,imHeader,imCell,imPdfPages,holFor:(c,y,r)=>{const o=[S.settings.country,S.settings.region,S.settings.patron];S.settings.country=c;S.settings.region=r||"";S.settings.patron=null;const h=holidays(y);[S.settings.country,S.settings.region,S.settings.patron]=o;return h;},holidays,ruleDate,easterO,RULES:()=>RULES,WS:()=>WS};
 applyTheme(getTheme());
 applyCountry();
 (async()=>{await loadLang(LANG);if(LANG!=="it"&&!I18N[LANG])LANG="it";setLoc();relabelPresets();setNames();translateDom();
