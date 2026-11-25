@@ -8,17 +8,19 @@ Serve solo a chi sceglie di creare un account. Senza account l'app funziona come
 |---|---|
 | `profiles` | Minuti di anticipo dei promemoria, lingua e fuso orario. |
 | `push_subs` | Iscrizioni alle notifiche, una per ogni dispositivo. |
-| `shifts` | Turni dei prossimi 45 giorni: ora d'inizio, ora del promemoria e testo della notifica, già scritto dall'app nella lingua dell'utente. |
+| `shifts` | Turni dei prossimi 45 giorni: ora d'inizio, ora del promemoria e testo della notifica, già scritto dall'app nella lingua dell'utente. Con `kind='co'` gli avvisi di MyTurn Business quando l'azienda pubblica i turni. |
 | `sync_meta` | Per la sincronizzazione: il sale della password e un piccolo testo cifrato per controllarla. |
 | `sync_items` | Per la sincronizzazione: i dati cifrati sul dispositivo (illeggibili per il server), un elemento per giorno o impostazione, con un identificativo anch'esso cifrato. |
 | `app_config` | Chiavi VAPID e segreto del cron. Nessun utente può leggerla: la legge solo il server. |
 | `teams` | MyTurn Business: le aziende (nome, paese, regione). |
 | `team_members` | MyTurn Business: le persone di ogni azienda, con ruolo (titolare, responsabile, dipendente), reparto, ore e ferie. Chi non ha ancora l'app non ha un account collegato. |
 | `team_invites` | MyTurn Business: i codici d'invito, uno per persona, validi 14 giorni e usabili una volta. |
+| `team_shifts` | MyTurn Business: i turni pubblicati, uno per persona e giorno, con un numero di versione che cresce a ogni cambio. |
+| `team_draft` | MyTurn Business: la bozza dei turni (solo chi gestisce la vede); un valore vuoto vuol dire "togli il turno di quel giorno". |
 
 Le regole di accesso (RLS) sono attive su tutte le tabelle: ognuno vede solo le proprie righe. Le scritture passano dalle funzioni `save_push`, `forget_push` e `set_shifts`.
 
-Per MyTurn Business (migrazione `20261125180000_aziende.sql`) i dati dell'azienda **non sono cifrati**: l'azienda la vede chi ne fa parte, le persone le vede tutte chi gestisce (titolare e responsabile) e ognuno la propria riga, gli inviti solo chi gestisce. Le scritture passano dalle funzioni `team_*`, che controllano il ruolo di chi chiama.
+Per MyTurn Business (migrazioni `20261125180000_aziende.sql` e `20261125210000_turni_squadra.sql`) i dati dell'azienda **non sono cifrati**: l'azienda la vede chi ne fa parte, le persone le vede tutte chi gestisce (titolare e responsabile) e ognuno la propria riga, gli inviti solo chi gestisce. I turni pubblicati li vede ognuno per sé e chi gestisce tutti; la bozza solo chi gestisce. Le scritture passano dalle funzioni `team_*`, che controllano il ruolo di chi chiama. `team_publish` lascia anche un avviso nella tabella `shifts` per chi ha le notifiche attive: lo manda `send-reminders` come un promemoria, con il testo di `team_notice` nella lingua di `profiles.lang` (la scrive l'app di chi fa parte di un'azienda).
 
 ## Funzioni
 

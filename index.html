@@ -464,6 +464,37 @@ dl.pay .totrow{border-top:1px solid var(--line);padding-top:10px;font-weight:700
 .tmrow small i{width:8px;height:8px;border-radius:50%;background:var(--line);flex:0 0 auto}.tmrow small i.on{background:var(--good)}.tmrow small i.inv{background:var(--warn)}
 .tminv{background:var(--bg);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
 .tminv .code{font:700 26px/1.1 var(--mono);letter-spacing:.14em}.tminv .help{margin:0}.tminv .corow{width:100%}
+/* turni dell'azienda nel calendario del dipendente */
+.cob{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:var(--ink);color:var(--on-ink);flex:none}
+.cob svg{width:9px;height:9px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.day.conew{box-shadow:inset 0 0 0 2px var(--ink)}
+#edForm.colock .seg,#edForm.colock #workA,#edForm.colock #edStd,#edForm.colock #permBox{opacity:.55;pointer-events:none}
+/* turni della squadra (team.js): al computer una tabella, sul telefono un giorno alla volta */
+#tm.tmwide{width:min(1120px,100%)}
+.plnav{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:6px 10px;width:100%;max-width:360px}.placts>.btn{flex:0 1 260px}.plnav b{font-size:16px;text-align:center}
+.plnav .btn.round{box-shadow:none;background:var(--sunken)}.plnav .linkbtn{grid-column:1/-1;justify-self:center}
+.plbrush{display:flex;gap:8px;flex-wrap:wrap}.plbrush .chip{box-shadow:none;border:1px solid var(--line)}.plbrush .chip[aria-pressed=true]{outline:2px solid var(--ink);outline-offset:1px}
+.plgrid{display:grid;grid-template-columns:minmax(120px,1.5fr) repeat(7,minmax(58px,1fr)) 72px;gap:4px;align-items:stretch}
+.plh{font:600 11px/1.2 var(--mono);text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:4px 2px;text-align:center}.plh.today{color:var(--ink)}
+.plname{display:flex;flex-direction:column;justify-content:center;min-width:0;font-size:14px}.plname b{font-weight:600;overflow-wrap:anywhere}.plname small{color:var(--muted);font-size:12px}
+.plc{all:unset;box-sizing:border-box;cursor:pointer;position:relative;border-radius:10px;min-height:42px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:600;background:var(--sunken);text-align:center;padding:2px 4px;line-height:1.15}
+.plc.t-m{background:var(--m-bg);color:var(--m-fg)}.plc.t-p{background:var(--p-bg);color:var(--p-fg)}.plc.t-n{background:var(--n-bg);color:var(--n-fg)}.plc.t-f{background:var(--f-bg);color:var(--f-fg)}.plc.t-x{background:var(--x-bg);color:var(--x-fg)}
+.plc:focus-visible{outline:2px solid var(--ink)}.plc.dr::after{content:"";position:absolute;top:4px;right:4px;width:6px;height:6px;border-radius:50%;background:var(--ink)}
+.plc.wr{box-shadow:inset 0 0 0 2px var(--warn)}.plc .nt{position:absolute;bottom:4px;right:5px;width:5px;height:5px;border-radius:2px;background:currentColor;opacity:.6}
+.plhrs{display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--muted);text-align:center}.plhrs.ov{color:var(--warn);font-weight:700}
+.plfoot{font-size:12.5px;color:var(--muted);display:flex;align-items:center;justify-content:center;padding:6px 0}.plfoot.lab{justify-content:flex-start}
+.plfoot.n{font-weight:700;color:var(--ink);border-radius:10px}.plfoot.wr{box-shadow:inset 0 0 0 2px var(--warn)}
+.pldays{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.plwd{all:unset;box-sizing:border-box;cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 0 11px;border-radius:12px;background:var(--bg);min-width:0}
+.plwd small{font:500 10.5px/1.1 var(--mono);text-transform:uppercase;letter-spacing:.02em;color:var(--muted);max-width:100%;overflow:hidden;text-overflow:clip}
+.plwd b{font-size:16px;font-weight:650;line-height:1.1}.plwd.today small{color:var(--ink);font-weight:700}
+.plwd[aria-pressed=true]{background:var(--ink);color:var(--on-ink)}.plwd[aria-pressed=true] small{color:inherit;opacity:.75}
+.plwd .w{position:absolute;bottom:4px;left:50%;margin-left:-2.5px;width:5px;height:5px;border-radius:50%;background:var(--warn)}.plwd:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+.plday{display:flex;flex-direction:column;gap:6px}
+.plrow{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:10px;background:var(--bg);border-radius:14px;padding:8px 8px 8px 12px}
+.plrow>span:first-child{flex:1;min-width:0;display:flex;flex-direction:column}.plrow b{font-weight:600;overflow-wrap:anywhere}.plrow small{color:var(--muted);font-size:12px}
+.plrow .plc{min-width:92px;flex:0 0 auto}
+.plwarn{border-radius:14px;padding:12px 14px;background:color-mix(in srgb,var(--warn) 12%,transparent);font-size:13.5px}.plwarn ul{margin:6px 0 0;padding-left:18px}
 .alhd{display:flex;justify-content:space-between;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);padding:10px 0 2px}
 .altn{display:inline-flex;align-items:center;gap:7px}
 .altn .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
@@ -622,6 +653,7 @@ dl.pay .totrow{border-top:1px solid var(--line);padding-top:10px;font-weight:700
     <h2 id="edTitle"></h2>
     <p class="sub" id="edSub"></p>
     <p class="saved" id="edSaved">Le modifiche si salvano da sole.</p>
+    <p class="bpst" id="edCo" hidden></p>
     <div class="seg" role="radiogroup" aria-label="Tipo di giornata">
       <label><input type="radio" name="kind" id="k-w" value="w"><span>Turno</span></label>
       <label><input type="radio" name="kind" id="k-r" value="r"><span>Riposo</span></label>
@@ -1343,11 +1375,13 @@ function normSettings(s){s=s||{};const wd=num(s.wd,0.5,16,DEF.wd),sat=num(s.sat,
   if(!o.presets.length)o.presets=DEF.presets.map(p=>({n:t(p.n),t:p.t}));
   (Array.isArray(s.cycle)?s.cycle:[]).forEach(c=>{if(c&&o.cycle.length<12&&(c.v==="r"||/^p\d+$/.test(c.v)))o.cycle.push({v:c.v,c:num(c.c,1,14,1)|0||1});});
   return o;}
-function normEntry(e){if(!e||typeof e!=="object")return null;const n=String(e.n||"").slice(0,300);
+/* co = turno dell'azienda (MyTurn Business): {t: azienda, v: versione, n?: nota dell'azienda}. Non si cambia a mano. */
+function coOf(e){const c=e&&e.co;if(!c||typeof c!=="object"||typeof c.t!=="string"||!c.t)return null;const o={t:c.t.slice(0,40),v:Math.max(0,Math.floor(+c.v||0))};if(c.n)o.n=String(c.n).slice(0,120);return o;}
+function normEntry(e){if(!e||typeof e!=="object")return null;const n=String(e.n||"").slice(0,300),co=coOf(e);
   if(e.k==="w"&&okT(e.s)){const o={k:"w",s:e.s,ot:num(e.ot,-12,12,0),n};const d=num(e.d,0.5,16,0);if(d)o.d=d;
     if(okT(e.s2)){o.s2=e.s2;const d2=num(e.d2,0.5,16,0);if(d2)o.d2=d2;}
-    if(Array.isArray(e.l)){const l=[...new Set(e.l.map(x=>String(x).slice(0,16)).filter(Boolean))].slice(0,8);if(l.length)o.l=l;}return o;}
-  if(KIND[e.k]){const o={k:e.k,n};if(e.k==="p"){const h=num(e.h,0.5,16,0);if(h)o.h=h;}return o;}return null;}
+    if(Array.isArray(e.l)){const l=[...new Set(e.l.map(x=>String(x).slice(0,16)).filter(Boolean))].slice(0,8);if(l.length)o.l=l;}if(co)o.co=co;return o;}
+  if(KIND[e.k]){const o={k:e.k,n};if(e.k==="p"){const h=num(e.h,0.5,16,0);if(h)o.h=h;}if(co)o.co=co;return o;}return null;}
 function normDays(d){const o={};if(d&&typeof d==="object")for(const k in d){if(/^\d{4}-\d\d-\d\d$/.test(k)){const e=normEntry(d[k]);if(e)o[k]=e;}}return o;}
 /* reperibilità {s,d,x: ore di intervento} e secondo lavoro {s,d,n}: un elenco a parte per giorno, così non toccano i conti del lavoro principale */
 function normOc(m){const o={};if(m&&typeof m==="object")for(const k in m){const e=m[k];if(isK(k)&&e&&okT(e.s))o[k]={s:e.s,d:num(e.d,0.5,24,12),x:num(e.x,0,24,0)};}return o;}
@@ -1399,6 +1433,7 @@ function j2List(){return J2on()?Object.keys(S.j2).sort().map(k=>Object.assign({k
 function ocRange(k){const o=S.oc[k],d=dateOf(k),a=new Date(d.getFullYear(),d.getMonth(),d.getDate(),0,toMin(o.s));return{start:a,end:new Date(+a+o.d*36e5)};}
 const ocTxt=k=>{const r=ocRange(k);return hm(r.start)+"–"+hm(r.end);};
 function ocMonth(pre){const o={n:0,x:0};for(const k in S.oc)if(k.startsWith(pre)){o.n++;o.x+=S.oc[k].x||0;}return o;}
+const CO_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7V5h6v2M4 8h16v11H4zM4 13h16"/></svg>';
 const OC_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>';
 const presetSub=p=>p.t2?p.t+" · "+p.t2:p.t+(p.d?" · "+hrs(p.d)+" h":"");
 function lblMap(){const m={};S.settings.labels.forEach(l=>m[l.id]=l.n);return m;}
@@ -1489,7 +1524,12 @@ function setStatus(){$("status").textContent=t("I turni sono salvati su questo d
 
 /* ---------- edits with undo ---------- */
 const STO=n=>n==="oc"?S.oc:n==="j2"?S.j2:S.days;
-function apply(changes,msg){const prev=changes.map(c=>[c[0],STO(c[2])[c[0]]||null,c[2]]);
+function apply(changes,msg){
+  /* MyTurn Business: un turno dell'azienda cambia solo se la modifica tiene il suo segno (note, ore in più, etichette) */
+  const locked=changes.filter(c=>!c[2]&&S.days[c[0]]&&S.days[c[0]].co&&!(c[1]&&c[1].co));
+  if(locked.length){changes=changes.filter(c=>!locked.includes(c));const lm=tn(locked.length,"{n} giorno è un turno dell'azienda e non è stato cambiato.","{n} giorni sono turni dell'azienda e non sono stati cambiati.");
+    if(!changes.length){toast(locked.length===1?t("È un turno dell'azienda: per cambiarlo chiedilo al responsabile."):lm);return;}msg=msg?msg+" "+lm:lm;}
+  const prev=changes.map(c=>[c[0],STO(c[2])[c[0]]||null,c[2]]);
   changes.forEach(c=>{const m=STO(c[2]);if(c[1])m[c[0]]=c[1];else delete m[c[0]];mark(monthId(c[0]),c[0]);});
   render();if(msg)toast(msg,()=>apply(prev,null));}
 let toastT=null;
@@ -1559,13 +1599,13 @@ function render(){
       if(i.split)body='<span class="s">'+hs(i.segs[0].start)+"–"+hs(i.segs[0].end)+'</span><span class="e">'+hs(i.segs[1].start)+"–"+hs(i.segs[1].end)+(i.plus?'<span class="p1"> ⁺¹</span>':"")+"</span>";
       else body='<span class="s">'+e.s+'</span><span class="e">'+hm(i.end)+(i.plus?'<span class="p1"> ⁺¹</span>':"")+"</span>";}
     else if(e)body='<span class="w">'+kshort(e.k)+"</span>"+(e.k==="p"&&e.h?'<span class="e">'+hrs(e.h)+" h</span>":"");
-    const cls="day"+(e?" t-"+tint(e):"")+(d.getMonth()!==m?" out":"")+(k===today?" today":"")+(hol||d.getDay()===0?" hol":"");
+    const cls="day"+(e?" t-"+tint(e):"")+(d.getMonth()!==m?" out":"")+(k===today?" today":"")+(hol||d.getDay()===0?" hol":"")+(e&&e.co?" co":"")+(e&&e.co&&coIsNew(k)?" conew":"");
     let meta="";const oc=S.oc[k],j2=J2on()&&S.j2[k];
     if(j2){const i2=info(k,j2Entry(k));body+='<span class="j2">'+hs(i2.start)+"–"+hs(i2.end)+"</span>";}
     if(e&&e.k==="w"&&e.ot)meta+=(e.ot>0?"+":"−")+hrs(Math.abs(e.ot))+"h";
     if(e&&e.n)meta+=' <i class="dot" title="'+t("Nota")+'"></i>';
     h+='<button class="'+cls+'" data-k="'+k+'" aria-label="'+esc(fWDM(d)+(hol?", "+hol:"")+", "+describe(k,e)+(oc?", "+t("Reperibilità")+" "+ocTxt(k):"")+(j2?", "+j2Name()+" "+rangeTxt(info(k,j2Entry(k))):"")+(flags[k]?", "+t("riposo sotto {n} ore",{n:RULES.rest}):""))+'"'+(hol?' title="'+esc(hol)+'"':"")+">"
-      +'<span class="num"><b>'+d.getDate()+'</b><span class="icons">'+(oc?'<i class="ocb" title="'+esc(t("Reperibilità")+" "+ocTxt(k))+'">'+OC_ICON+"</i>":"")+(flags[k]?'<i class="flag" title="'+esc(t("Meno di {n} ore di riposo dal turno precedente",{n:RULES.rest}))+'">!</i>':"")+"</span></span>"
+      +'<span class="num"><b>'+d.getDate()+'</b><span class="icons">'+(e&&e.co?'<i class="cob" title="'+esc(t("Turno dell'azienda"))+'">'+CO_ICON+"</i>":"")+(oc?'<i class="ocb" title="'+esc(t("Reperibilità")+" "+ocTxt(k))+'">'+OC_ICON+"</i>":"")+(flags[k]?'<i class="flag" title="'+esc(t("Meno di {n} ore di riposo dal turno precedente",{n:RULES.rest}))+'">!</i>':"")+"</span></span>"
       +body+(labelsOf(e,LM).length?'<span class="lab">'+esc(labelsOf(e,LM)[0])+(labelsOf(e,LM).length>1?" +"+(labelsOf(e,LM).length-1):"")+"</span>":"")+(meta?'<span class="meta">'+meta+"</span>":"")+"</button>";
   }
   $("grid").innerHTML=h;
@@ -1766,8 +1806,15 @@ function openEditor(k){edDirty=false;clearTimeout(edT);edT=null;editing=k;const 
   $("k-"+(e?e.k:"w")).checked=true;edOt=e&&e.k==="w"?e.ot||0:0;edH=e&&e.k==="p"?permH(k,e):stdHours(k);$("edNote").value=e?e.n||"":"";
   edLoad(e&&e.k==="w"?e:presetEntry(p0));edL=new Set(e&&e.l||[]);edLabels();
   $("edPresets").innerHTML=S.settings.presets.map((p,i)=>p.j===2?"":'<button type="button" class="chip" data-i="'+i+'"><i class="d-'+slot(p.t)+'"></i>'+esc(p.n)+" <small>"+presetSub(p)+"</small></button>").join("");
-  xLoad(k);edDelVis();edRefresh();openDlg($("ed"));}
-const edDelVis=()=>{$("edDel").hidden=!(S.days[editing]||S.oc[editing]||S.j2[editing]);};
+  xLoad(k);edCoLock(e);edDelVis();edRefresh();openDlg($("ed"));}
+/* MyTurn Business: un turno dell'azienda si guarda ma non si cambia; restano note, ore in più ed etichette */
+function edCoLock(e){const co=e&&e.co;$("edForm").classList.toggle("colock",!!co);$("edCo").hidden=!co;
+  ["k-w","k-r","k-f","k-p","k-m","edStart","edSplit","edD1","edStart2","edD2","edStd","phMinus","phPlus"].forEach(id=>{$(id).disabled=!!co;});
+  $("edPresets").querySelectorAll("button").forEach(b=>b.disabled=!!co);
+  if(co){const was=coNew[editing]&&coNew[editing].p;
+    $("edCo").textContent=t("Turno di {x}: lo decide l'azienda. Puoi aggiungere note, ore in più ed etichette.",{x:coTeamName(co.t)})+(co.n?" "+t("Nota dell'azienda: {n}",{n:co.n}):"")+
+      (was?" "+t("Prima era: {x}.",{x:describe(editing,was)}):"");coSeen(editing);}}
+const edDelVis=()=>{$("edDel").hidden=!(S.days[editing]||S.oc[editing]||S.j2[editing])||!!(S.days[editing]&&S.days[editing].co);};
 const j2P=()=>S.settings.presets.map((p,i)=>[p,i]).filter(x=>x[0].j===2);
 function xLoad(k){const s0=S.settings,o=S.oc[k],j=S.j2[k];
   $("ocBox").hidden=!(s0.ocOn||o);$("ocOn").checked=!!o;$("ocRow").hidden=!o;$("ocS").value=o?o.s:s0.ocS;$("ocD").value=o?o.d:s0.ocD;$("ocX").value=o&&o.x?o.x:"";
@@ -1784,6 +1831,9 @@ let edT=null,edDirty=false;
 function edTouch(delay){edDirty=true;clearTimeout(edT);edT=setTimeout(edCommit,delay==null?250:delay);}
 function edFlush(){if(edT){clearTimeout(edT);edT=null;edCommit();}}
 function edCommit(){edT=null;if(!edDirty||!editing)return;const k=kindSel(),n=$("edNote").value.trim();
+  const cur0=S.days[editing];if(cur0&&cur0.co){const e2=Object.assign({},cur0,{n});
+    if(e2.k==="w"){e2.ot=edOt;const ids=[...edL].filter(id=>S.settings.labels.some(l=>l.id===id));if(ids.length)e2.l=ids;else delete e2.l;}
+    apply([[editing,normEntry(e2)]],null);edDelVis();return;}
   if(k==="w"&&(!okT($("edStart").value)||edSplitOn()&&!okT($("edStart2").value)))return;
   let e={k,n};if(k==="w"){e=edEntry();e.n=n;const ids=[...edL].filter(id=>S.settings.labels.some(l=>l.id===id));if(ids.length)e.l=ids;e=normEntry(e);}
   if(k==="p"&&edH!==stdHours(editing))e.h=edH;
@@ -2653,14 +2703,17 @@ function coErr(e){const m=String(e&&e.message||"");
     /team full/.test(m)?t("La squadra ha già 200 persone."):
     /last owner/.test(m)?t("Sei l'unico titolare con l'app: prima nomina un altro titolare."):
     /forbidden/.test(m)?t("Non hai i permessi per farlo."):
+    /bad range/.test(m)?t("Si possono cambiare solo i turni da due mesi fa a un anno da oggi."):
+    /bad shift/.test(m)?t("Controlla l'inizio e le ore del turno."):
+    /not found/.test(m)?t("Questa persona non è più nella squadra: riapri la squadra."):
     e&&e.status===401?t("Accedi di nuovo all'account e riprova."):
     t("Non riesco a raggiungere il server. Controlla la connessione e riprova.");}
 function coStat(msg,cls){const e=$("coStatus");e.hidden=!msg;e.className="bpst"+(cls?" "+cls:"");e.textContent=msg||"";}
 async function coLoad(){if(!BIZ||!SB_ON()||!AU)return CO;
-  try{const r=await sbFetch("/rest/v1/rpc/team_mine",{body:{}});CO=Array.isArray(r)?r:[];coSave();}catch(e){}
+  try{const r=await sbFetch("/rest/v1/rpc/team_mine",{body:{}});CO=Array.isArray(r)?r:[];coSave();coStrip();coPull();coLang();}catch(e){}
   coRender();return CO;}
 /* riga in Impostazioni → Account */
-function coRow(){if(!AU&&CO.length){CO=[];coSave();}
+function coRow(){if(!AU&&CO.length){CO=[];coSave();coStrip();}
   const on=BIZ&&SB_ON()&&!!AU;$("coRow").hidden=!on;if(!on)return;
   $("coLine").textContent=!CO.length?t("Azienda: nessuna"):CO.length===1?t("Azienda: {x}",{x:CO[0].team+" · "+coRoleName(CO[0].role)}):tn(CO.length,"{n} azienda","{n} aziende");}
 function coRender(){coRow();if(!$("co").open)return;const need=!SB_ON()?"off":!AU?"login":"";
@@ -2717,12 +2770,62 @@ async function coCreate(){const name=$("coTeamName").value.trim(),me=$("coMyName
 /* la sezione Squadra sta in team.js: si scarica solo per chi gestisce un'azienda */
 function coTeamLoad(){
   if(!coTeamJs)coTeamJs=new Promise((ok,ko)=>{const s=document.createElement("script");s.src="team.js?v="+APP_VERSION;
-    s.onload=()=>{try{ok(window.MyTurnTeamInit({t,tn,esc,sbFetch,openDlg,unlockPage,toast,ctryName,coLoad,coErr,coFmt,coRoleName,SITE,NATIVE,CAP,loc:()=>LOC,ctrys:()=>CTRYS}));}catch(e){coTeamJs=null;ko(e);}};
+    s.onload=()=>{try{ok(window.MyTurnTeamInit({t,tn,esc,sbFetch,openDlg,unlockPage,toast,ctryName,coLoad,coErr,coFmt,coRoleName,SITE,NATIVE,CAP,
+      loc:()=>LOC,ctrys:()=>CTRYS,presets:()=>S.settings.presets.filter(p=>p.j!==2),stdHours,keyOf,dateOf,addDays,monday,toMin,kshort,kind,slot,fWDd,fWDM,lawWeek}));}catch(e){coTeamJs=null;ko(e);}};
     s.onerror=()=>{coTeamJs=null;s.remove();ko(new Error("team.js"));};document.head.appendChild(s);});
   return coTeamJs;}
 async function coOpenTeam(c,fresh){if(!c)return;
   try{const T=await coTeamLoad();if($("co").open)$("co").close();T.open(c,fresh);}
   catch(e){coStat(t("Non riesco ad aprire la squadra. Controlla la connessione e riprova."),"err");}}
+/* ---------- MyTurn Business, tappa 2: i turni pubblicati arrivano nel calendario ----------
+   Solo dalla prima azienda (il lavoro principale). Ogni giorno pubblicato diventa un giorno di MyTurn con il segno co
+   {t: azienda, v: versione, n: nota dell'azienda}: non si cambia a mano (apply, edCoLock) ma tiene note, ore in più
+   ed etichette della persona. coNew: giorni appena cambiati {t: quando, p: il turno di prima}, evidenziati per 7 giorni
+   o finché si aprono. Un giorno che la persona aveva segnato in un altro modo: nel passato resta suo (sono le ore fatte),
+   da oggi in poi vince l'azienda, ma "Annulla" nell'avviso lo tiene (coKeep: giorno → versione) finché l'azienda non lo cambia. */
+const CO_NEW_K="myturn-co-news",CO_KEEP_K="myturn-co-keep";let coNew={},coKeep={},coPulling=false;
+try{coNew=JSON.parse(localStorage.getItem(CO_NEW_K)||"{}")||{};coKeep=JSON.parse(localStorage.getItem(CO_KEEP_K)||"{}")||{};}catch(e){coNew={};coKeep={};}
+function coNewSave(){try{localStorage.setItem(CO_NEW_K,JSON.stringify(coNew));localStorage.setItem(CO_KEEP_K,JSON.stringify(coKeep));}catch(e){}}
+function coIsNew(k){try{const x=coNew[k],w=x&&(typeof x==="number"?x:x.t);return !!w&&Date.now()-w<7*864e5;}catch(e){return false;}}  /* render può arrivare prima di questa parte */
+function coSeen(k){if(coNew[k]){delete coNew[k];coNewSave();render();}}
+/* stesso turno? (orari effettivi, così 8 ore scritte o "standard" sono uguali) */
+function coSame(k,a,b){if(!a||!b||a.k!==b.k)return false;if(a.k==="w")return rangeTxt(info(k,a))===rangeTxt(info(k,b));return a.k!=="p"||permH(k,a)===permH(k,b);}
+const coBare=e=>{const o={k:e.k};["s","d","s2","d2","h"].forEach(x=>{if(e[x]!=null)o[x]=e[x];});return o;};
+function coKeepMine(list){list.forEach(([k,e,v])=>{S.days[k]=e;coKeep[k]=v;delete coNew[k];});coNewSave();mark();render();
+  toast(tn(list.length,"Tenuto il giorno che avevi segnato tu.","Tenuti i {n} giorni che avevi segnato tu."));}
+/* la lingua dell'app va sul server, per scrivere l'avviso quando l'azienda pubblica (team_notice) */
+function coLang(){if(!AU||!CO.length)return;const key=AU.user.id+"|"+LANG;let last="";try{last=localStorage.getItem("myturn-co-lang")||"";}catch(e){}
+  if(last===key)return;
+  sbFetch("/rest/v1/profiles",{body:{user_id:AU.user.id,lang:LANG},headers:{Prefer:"resolution=merge-duplicates,return=minimal"}})
+    .then(()=>{try{localStorage.setItem("myturn-co-lang",key);}catch(e){}}).catch(()=>{});}
+function coTeamName(id){const c=CO.find(x=>x.team_id===id);return c?c.team:t("l'azienda");}
+function coEntry(v,cur,team,ver){const o={k:v.k,n:cur&&cur.n||"",co:{t:team,v:ver}};if(v.n)o.co.n=v.n;
+  if(v.k==="w"){o.s=v.s;o.d=v.d;if(v.s2){o.s2=v.s2;o.d2=v.d2;}if(cur&&cur.k==="w"){o.ot=cur.ot||0;if(cur.l)o.l=cur.l;}}
+  if(v.k==="p"&&v.h)o.h=v.h;return normEntry(o);}
+/* toglie il segno ai giorni di aziende che non sono più il lavoro principale: restano come giorni normali */
+function coStrip(){const main=CO[0]&&CO[0].team_id;let n=0;
+  for(const k in S.days){const e=S.days[k];if(e.co&&e.co.t!==main){delete e.co;n++;}}if(n){mark();render();}}
+async function coPull(){if(!BIZ||!SB_ON()||!AU||coPulling||!CO[0])return 0;const c=CO[0];coPulling=true;
+  try{const from=keyOf(addDays(new Date(),-35)),today=keyOf(new Date());
+    const rows=await sbFetch("/rest/v1/team_shifts?member_id=eq."+encodeURIComponent(c.member_id)+"&day=gte."+from+"&select=day,v,version&order=day&limit=1000",{method:"GET"});
+    if(!Array.isArray(rows))return 0;
+    const seen={},ch=[],mine=[],was={},first=!Object.values(S.days).some(e=>e.co&&e.co.t===c.team_id);
+    for(const k in coKeep)if(k<from)delete coKeep[k];
+    rows.forEach(r=>{if(!isK(r.day)||!r.v)return;seen[r.day]=1;const cur=S.days[r.day];
+      if(cur&&!cur.co&&!coSame(r.day,cur,r.v)){if(r.day<today||coKeep[r.day]===r.version)return;mine.push([r.day,cur,r.version]);}
+      const nv=coEntry(r.v,cur,c.team_id,r.version);
+      if(nv&&JSON.stringify(cur)!==JSON.stringify(nv)){if(cur&&cur.co&&!coSame(r.day,cur,nv))was[r.day]=coBare(cur);S.days[r.day]=nv;ch.push(r.day);}});
+    for(const k in S.days){const e=S.days[k];if(e.co&&e.co.t===c.team_id&&k>=from&&!seen[k]){was[k]=coBare(e);if(e.n)S.days[k]={k:"r",n:e.n};else delete S.days[k];ch.push(k);}}
+    if(!ch.length){coNewSave();return 0;}
+    const fut=ch.filter(k=>k>=today);if(!first)fut.forEach(k=>{coNew[k]=was[k]?{t:Date.now(),p:was[k]}:{t:Date.now()};});
+    coNewSave();mark();render();
+    if(fut.length){let msg=first?tn(fut.length,"Ricevuto da {x} il turno di {n} giorno.","Ricevuti da {x} i turni di {n} giorni.",{x:c.team}):tn(fut.length,"{x} ha cambiato {n} giorno nei tuoi turni.","{x} ha cambiato {n} giorni nei tuoi turni.",{x:c.team});
+      if(mine.length)msg+=" "+tn(mine.length,"Un giorno l'avevi segnato tu in un altro modo: con Annulla lo tieni.","{n} giorni li avevi segnati tu in un altro modo: con Annulla li tieni.");
+      toast(msg,mine.length?()=>coKeepMine(mine):null);}
+    return ch.length;}
+  catch(e){return 0;}finally{coPulling=false;}}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&BIZ&&AU)coLoad();});
+setInterval(()=>{if(document.visibilityState==="visible"&&BIZ&&AU&&CO.length)coPull();},5*60e3);
 $("coBtn").onclick=openCo;$("coClose").onclick=()=>$("co").close();
 $("coGo").onclick=coPreview;$("coCode").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();coPreview();}});
 $("coCode").addEventListener("input",()=>{const v=coClean($("coCode").value),f=coFmt(v);if($("coCode").value!==f)$("coCode").value=f;if(coPrevData&&coPrevData.code!==v){coPrevData=null;coRender();}});
@@ -3472,7 +3575,7 @@ function obStart(){OB.existing=Object.keys(S.days).length>0||!!S.settings.labels
   OB.wd=S.settings.wd;OB.sat=S.settings.sat;OB.step=0;OB.q="";obRender();openDlg($("ob"));
   if(OB.lang!==LANG)setLang(OB.lang).then(obRender);}
 
-window.myturnDebug={coLoad,coOpenTeam,CO:()=>CO,BIZ:()=>BIZ,remItems,wgData,syItems,syHash,syRun:()=>syRun(),S,apply,mark,startTour,tn,t,bpLines,bpParse,bpNum,bpSplit,imParse,imPlan,imOcr,imRefine,imCanvas,imPrep,imDeskew,imLines,imHeader,imCell,imPdfPages,holFor:(c,y,r)=>{const o=[S.settings.country,S.settings.region,S.settings.patron];S.settings.country=c;S.settings.region=r||"";S.settings.patron=null;const h=holidays(y);[S.settings.country,S.settings.region,S.settings.patron]=o;return h;},holidays,ruleDate,easterO,RULES:()=>RULES,WS:()=>WS};
+window.myturnDebug={coLoad,coOpenTeam,coPull,coNew:()=>coNew,CO:()=>CO,BIZ:()=>BIZ,remItems,wgData,syItems,syHash,syRun:()=>syRun(),S,apply,mark,startTour,tn,t,bpLines,bpParse,bpNum,bpSplit,imParse,imPlan,imOcr,imRefine,imCanvas,imPrep,imDeskew,imLines,imHeader,imCell,imPdfPages,holFor:(c,y,r)=>{const o=[S.settings.country,S.settings.region,S.settings.patron];S.settings.country=c;S.settings.region=r||"";S.settings.patron=null;const h=holidays(y);[S.settings.country,S.settings.region,S.settings.patron]=o;return h;},holidays,ruleDate,easterO,RULES:()=>RULES,WS:()=>WS};
 applyTheme(getTheme());
 applyCountry();
 (async()=>{await loadLang(LANG);if(LANG!=="it"&&!I18N[LANG])LANG="it";setLoc();relabelPresets();setNames();translateDom();

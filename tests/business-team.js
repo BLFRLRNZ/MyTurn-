@@ -6,53 +6,7 @@
 const {chromium}=require('playwright');const path=require('path'),os=require('os'),fs=require('fs');
 const OUT=process.env.OUT||path.join(os.tmpdir(),'myturn-tests');fs.mkdirSync(OUT,{recursive:true});
 const URL0='http://localhost:8765/index.html';
-const USERS={A:{id:'ua',email:'anna@bar.test'},B:{id:'ub',email:'luca@bar.test'},C:{id:'uc',email:'marco@bar.test'}};
-const DB={teams:[],members:[],invites:[]};let seq=0;const uuid=()=>'00000000-0000-4000-8000-'+String(++seq).padStart(12,'0');
-const role=(team,uid)=>{const m=DB.members.find(m=>m.team_id===team&&m.user_id===uid&&m.status==='attivo');return m?m.role:null;};
-const owners=(team,except)=>DB.members.filter(m=>m.team_id===team&&m.role==='titolare'&&m.status==='attivo'&&m.user_id&&m.id!==except).length;
-const code=()=>{const a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let c='';for(let i=0;i<8;i++)c+=a[Math.floor(Math.random()*32)];return c;};
-class E extends Error{}
-const RPC={
-  team_mine:(u)=>DB.members.filter(m=>m.user_id===u&&m.status==='attivo').map(m=>{const t=DB.teams.find(t=>t.id===m.team_id);
-    return {team_id:t.id,team:t.name,country:t.country,region:t.region,member_id:m.id,name:m.name,role:m.role,dept:m.dept,week_hours:m.week_hours,leave_days:m.leave_days,leave_hours:m.leave_hours};}),
-  team_create:(u,b)=>{const em=Object.values(USERS).find(x=>x.id===u).email;const t={id:uuid(),name:b.p_name.trim(),country:(b.p_country||'IT').toUpperCase(),region:b.p_region||null};DB.teams.push(t);
-    DB.members.push({id:uuid(),team_id:t.id,user_id:u,name:(b.p_my_name||'').trim()||em.split('@')[0],email:em,role:'titolare',dept:null,week_hours:null,leave_days:null,leave_hours:null,status:'attivo'});return t.id;},
-  team_update:(u,b)=>{if(role(b.p_team,u)!=='titolare')throw new E('forbidden');const t=DB.teams.find(t=>t.id===b.p_team);t.name=b.p_name.trim();t.country=b.p_country;return null;},
-  team_member_save:(u,b)=>{const me=role(b.p_team,u);if(!me||me==='dipendente')throw new E('forbidden');if(me==='responsabile'&&b.p_role!=='dipendente')throw new E('forbidden');
-    const v={name:b.p_name.trim(),role:b.p_role,dept:b.p_dept,week_hours:b.p_week_hours,leave_days:b.p_leave_days,leave_hours:b.p_leave_hours};
-    if(!b.p_id){const m=Object.assign({id:uuid(),team_id:b.p_team,user_id:null,email:null,status:'attivo'},v);DB.members.push(m);return m.id;}
-    const cur=DB.members.find(m=>m.id===b.p_id&&m.team_id===b.p_team&&m.status==='attivo');if(!cur)throw new E('not found');
-    if(me==='responsabile'&&cur.role!=='dipendente')throw new E('forbidden');if(cur.role==='titolare'&&b.p_role!=='titolare'&&!owners(b.p_team,cur.id))throw new E('last owner');
-    Object.assign(cur,v);return cur.id;},
-  team_member_remove:(u,b)=>{const me=role(b.p_team,u);if(!me||me==='dipendente')throw new E('forbidden');const cur=DB.members.find(m=>m.id===b.p_id);
-    if(me==='responsabile'&&cur.role!=='dipendente')throw new E('forbidden');if(cur.role==='titolare'&&!owners(b.p_team,cur.id))throw new E('last owner');
-    DB.invites=DB.invites.filter(i=>i.member_id!==cur.id||i.used_at);Object.assign(cur,{status:'uscito',user_id:null,email:null});return null;},
-  team_invite:(u,b)=>{const me=role(b.p_team,u);if(!me||me==='dipendente')throw new E('forbidden');const cur=DB.members.find(m=>m.id===b.p_member);
-    if(cur.user_id)throw new E('already joined');if(me==='responsabile'&&cur.role!=='dipendente')throw new E('forbidden');
-    DB.invites=DB.invites.filter(i=>i.member_id!==cur.id||i.used_at);const c=code();DB.invites.push({code:c,team_id:b.p_team,member_id:cur.id,expires_at:new Date(Date.now()+14*864e5).toISOString(),used_at:null});return c;},
-  team_join_preview:(u,b)=>{const i=DB.invites.find(i=>i.code===b.p_code.toUpperCase()&&!i.used_at);const m=i&&DB.members.find(m=>m.id===i.member_id&&!m.user_id);if(!m)throw new E('invalid code');
-    const t=DB.teams.find(t=>t.id===i.team_id);return {team:t.name,country:t.country,name:m.name,role:m.role,dept:m.dept};},
-  team_join:(u,b)=>{const i=DB.invites.find(i=>i.code===b.p_code.toUpperCase()&&!i.used_at);if(!i)throw new E('invalid code');
-    if(role(i.team_id,u))throw new E('already member');const m=DB.members.find(m=>m.id===i.member_id&&!m.user_id);if(!m)throw new E('invalid code');
-    Object.assign(m,{user_id:u,email:Object.values(USERS).find(x=>x.id===u).email});i.used_at=new Date().toISOString();return i.team_id;},
-  team_leave:(u,b)=>{const m=DB.members.find(m=>m.team_id===b.p_team&&m.user_id===u&&m.status==='attivo');if(!m)return null;
-    if(m.role==='titolare'&&!owners(b.p_team,m.id))throw new E('last owner');Object.assign(m,{user_id:null,email:null});return null;},
-  team_delete:(u,b)=>{if(role(b.p_team,u)!=='titolare')throw new E('forbidden');DB.teams=DB.teams.filter(t=>t.id!==b.p_team);DB.members=DB.members.filter(m=>m.team_id!==b.p_team);DB.invites=DB.invites.filter(i=>i.team_id!==b.p_team);return null;},
-};
-const CALLS=[];
-async function fake(r){const req=r.request(),u=new URL(req.url()),tok=(req.headers()['authorization']||'').replace(/^Bearer /,''),uid=USERS[tok]&&USERS[tok].id;
-  const J=(o,st=200)=>r.fulfill({status:st,contentType:'application/json',body:JSON.stringify(o)});
-  const fn=u.pathname.startsWith('/rest/v1/rpc/')&&u.pathname.slice(13);
-  if(fn&&RPC[fn]){CALLS.push(fn);if(!uid)return J({code:'P0001',message:'not authenticated'},400);
-    try{return J(RPC[fn](uid,JSON.parse(req.postData()||'{}')));}catch(e){if(e instanceof E)return J({code:'P0001',message:e.message},400);throw e;}}
-  if(u.pathname==='/rest/v1/team_members'){const team=(u.searchParams.get('team_id')||'').slice(3),me=role(team,uid);
-    return J(DB.members.filter(m=>m.team_id===team&&m.status==='attivo'&&(m.user_id===uid||me==='titolare'||me==='responsabile')).sort((a,b)=>a.name.localeCompare(b.name)));}
-  if(u.pathname==='/rest/v1/team_invites'){const team=(u.searchParams.get('team_id')||'').slice(3),me=role(team,uid);
-    return J(me==='titolare'||me==='responsabile'?DB.invites.filter(i=>i.team_id===team&&!i.used_at):[]);}
-  if(u.pathname.startsWith('/rest/v1/rpc/'))return J(null);
-  if(u.pathname==='/rest/v1/sync_meta'||u.pathname==='/rest/v1/sync_items')return J([]);
-  return J({});}
-
+const {USERS,DB,RPC,fake}=require('./business-fake');
 (async()=>{const b=await chromium.launch();let fail=0;const ok=(c,m)=>{console.log((c?'ok  ':'FAIL')+' '+m);if(!c)fail++;};
   async function device(who,o={}){const ctx=await b.newContext({viewport:{width:o.w||430,height:932},locale:'it-IT',colorScheme:o.dark?'dark':'light'});const p=await ctx.newPage();
     p.errs=[];p.on('pageerror',e=>p.errs.push(e.message));await p.route('https://test.supabase.co/**',fake);
