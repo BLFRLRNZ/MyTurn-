@@ -2824,7 +2824,15 @@ async function coPull(){if(!BIZ||!SB_ON()||!AU||coPulling||!CO[0])return 0;const
       toast(msg,mine.length?()=>coKeepMine(mine):null);}
     return ch.length;}
   catch(e){return 0;}finally{coPulling=false;}}
-document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&BIZ&&AU)coLoad();});
+/* chi fa già parte di un'azienda la ritrova anche dove MyTurn Business non è acceso, per esempio nell'app aggiunta alla
+   Home dell'iPhone (senza barra dell'indirizzo, con dati separati da Safari): con l'account, una domanda al server ogni
+   12 ore. Chi l'ha spento con ?business=0 resta senza. */
+async function coFind(){if(BIZ||!SB_ON()||!AU)return;let off=null,last=0;
+  try{off=localStorage.getItem(BIZ_K);last=+localStorage.getItem("myturn-biz-check")||0;}catch(e){}
+  if(off==="0"||Date.now()-last<12*36e5)return;
+  try{const r=await sbFetch("/rest/v1/rpc/team_mine",{body:{}});try{localStorage.setItem("myturn-biz-check",String(Date.now()));}catch(e){}
+    if(Array.isArray(r)&&r.length&&!BIZ){BIZ=true;try{localStorage.setItem(BIZ_K,"1");}catch(e){}CO=r;coSave();coRow();coStrip();coPull();coLang();}}catch(e){}}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&AU){if(BIZ)coLoad();else coFind();}});
 setInterval(()=>{if(document.visibilityState==="visible"&&BIZ&&AU&&CO.length)coPull();},5*60e3);
 $("coBtn").onclick=openCo;$("coClose").onclick=()=>$("co").close();
 $("coGo").onclick=coPreview;$("coCode").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();coPreview();}});
@@ -2833,7 +2841,7 @@ $("coNewBtn").onclick=coNewOpen;$("coCreate").onclick=coCreate;
 /* dopo l'accesso, un invito in sospeso riapre La mia azienda */
 $("ac").addEventListener("close",()=>{if(BIZ&&coInvite&&AU)setTimeout(openCo,250);});
 if(coInvite)coInviteFrom(coInvite);
-coRow();if(BIZ&&AU)setTimeout(coLoad,1500);
+coRow();if(BIZ&&AU)setTimeout(coLoad,1500);else if(AU)setTimeout(coFind,4000);
 
 /* ---------- sincronizzazione tra dispositivi (cifrata sul dispositivo) ----------
    Ogni dato è un "elemento": d|giorno, o|reperibilità, j|secondo lavoro, b|busta paga, s impostazioni.
@@ -3575,7 +3583,7 @@ function obStart(){OB.existing=Object.keys(S.days).length>0||!!S.settings.labels
   OB.wd=S.settings.wd;OB.sat=S.settings.sat;OB.step=0;OB.q="";obRender();openDlg($("ob"));
   if(OB.lang!==LANG)setLang(OB.lang).then(obRender);}
 
-window.myturnDebug={coLoad,coOpenTeam,coPull,coNew:()=>coNew,CO:()=>CO,BIZ:()=>BIZ,remItems,wgData,syItems,syHash,syRun:()=>syRun(),S,apply,mark,startTour,tn,t,bpLines,bpParse,bpNum,bpSplit,imParse,imPlan,imOcr,imRefine,imCanvas,imPrep,imDeskew,imLines,imHeader,imCell,imPdfPages,holFor:(c,y,r)=>{const o=[S.settings.country,S.settings.region,S.settings.patron];S.settings.country=c;S.settings.region=r||"";S.settings.patron=null;const h=holidays(y);[S.settings.country,S.settings.region,S.settings.patron]=o;return h;},holidays,ruleDate,easterO,RULES:()=>RULES,WS:()=>WS};
+window.myturnDebug={coLoad,coOpenTeam,coPull,coFind,coNew:()=>coNew,CO:()=>CO,BIZ:()=>BIZ,remItems,wgData,syItems,syHash,syRun:()=>syRun(),S,apply,mark,startTour,tn,t,bpLines,bpParse,bpNum,bpSplit,imParse,imPlan,imOcr,imRefine,imCanvas,imPrep,imDeskew,imLines,imHeader,imCell,imPdfPages,holFor:(c,y,r)=>{const o=[S.settings.country,S.settings.region,S.settings.patron];S.settings.country=c;S.settings.region=r||"";S.settings.patron=null;const h=holidays(y);[S.settings.country,S.settings.region,S.settings.patron]=o;return h;},holidays,ruleDate,easterO,RULES:()=>RULES,WS:()=>WS};
 applyTheme(getTheme());
 applyCountry();
 (async()=>{await loadLang(LANG);if(LANG!=="it"&&!I18N[LANG])LANG="it";setLoc();relabelPresets();setNames();translateDom();

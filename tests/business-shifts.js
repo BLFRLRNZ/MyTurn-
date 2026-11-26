@@ -42,7 +42,7 @@ const pub=(m,k)=>DB.shifts.find(s=>s.member_id===m&&s.day===k);
       if(!localStorage.getItem('myturn-v1')){localStorage.setItem('myturn-tour','1');localStorage.setItem('myturn-lang','it');
         localStorage.setItem('myturn-v1',JSON.stringify({days:D||{},settings:{setup:1,country:'IT'}}));
         localStorage.setItem('myturn-auth',JSON.stringify({access_token:who,refresh_token:'R',expires_at:Date.now()/1000+86400,user:{id:U[who].id,email:U[who].email}}));}},[who,USERS,o.days]);
-    await p.goto(URL0+'?business=1');await p.waitForTimeout(2200);return p;}
+    await p.goto(URL0+(o.q==null?'?business=1':o.q));await p.waitForTimeout(2200);return p;}
   const overflow=(p,sel)=>p.evaluate(sel=>{const r=document.querySelector(sel+' .sheet').getBoundingClientRect();
     return [...document.querySelectorAll(sel+' .sheet *')].filter(e=>{const x=e.getBoundingClientRect();return x.width&&(x.right>r.right+1||x.left<r.left-1);}).map(e=>e.id||e.className||e.tagName).slice(0,5);},sel);
   const txt=(p,sel)=>p.textContent(sel).then(x=>(x||'').replace(/\s+/g,' ').trim());
@@ -124,6 +124,14 @@ const pub=(m,k)=>DB.shifts.find(s=>s.member_id===m&&s.day===k);
   await B.screenshot({path:path.join(OUT,'biz_turni_scheda.png')});
   await B.click('#edSave');await B.waitForTimeout(400);
   const th=await B.evaluate(k=>myturnDebug.S.days[k],K[3]);ok(th.n==='Cambio con Sara'&&th.s==='09:00'&&th.d===6&&th.co&&th.co.t===tid,'nota di Luca salvata, il turno resta: '+JSON.stringify(th));
+
+  // --- 2b. l'app sulla Home dell'iPhone non ha ?business=1: chi è in un'azienda la ritrova da solo (coFind); con ?business=0 no
+  const H=await device('B',{q:''});await H.waitForTimeout(3500);
+  const hd=await H.evaluate(()=>({biz:myturnDebug.BIZ(),co:Object.values(myturnDebug.S.days).filter(e=>e.co).length}));
+  ok(hd.biz&&hd.co===6,'app sulla Home: MyTurn Business si accende da solo e arrivano i turni ('+hd.co+' giorni, con quello passato)');
+  ok(!H.errs.length,'app sulla Home: nessun errore '+H.errs.join('|'));await H.context().close();
+  const H0=await device('B',{q:'?business=0'});await H0.waitForTimeout(3500);
+  ok(!(await H0.evaluate(()=>myturnDebug.BIZ())),'con ?business=0 resta spento');await H0.context().close();
 
   // --- 3. Anna cambia lunedì e toglie giovedì; Luca riceve le modifiche
   await A.click('#tm .plbrush [data-b="p1"]');await A.click(cell(luca,K[0]));await A.click('#tm .plbrush [data-b="clear"]');await A.click(cell(luca,K[3]));await settle(A);
