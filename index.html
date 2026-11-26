@@ -239,6 +239,7 @@ input:focus-visible,textarea:focus-visible{outline:2px solid var(--ink);outline-
 /* gruppi dentro i pannelli: stessa spaziatura del pannello */
 #acOut:not([hidden]),#acIn:not([hidden]){display:flex;flex-direction:column;gap:14px}
 #acIn:not([hidden]){align-items:flex-start}
+.acbiz:not([hidden]){align-self:stretch;display:flex;flex-direction:column;gap:8px}.acbiz .sect{margin:0}.acbiz .help{margin:0}
 .auth{display:flex;flex-direction:column;gap:14px}.auth>.btn{min-height:46px}.aulinks{display:flex;flex-direction:column;align-items:flex-start;gap:2px;margin-top:-4px}.auth .linkbtn{margin:0}.auth .austat{margin:0}
 #acSect:not([hidden]){display:flex;flex-direction:column;gap:10px}
 #acSect .sect{margin-bottom:0}
@@ -919,6 +920,11 @@ dl.pay .totrow{border-top:1px solid var(--line);padding-top:10px;font-weight:700
       <button type="button" class="btn" id="syNow">Sincronizza ora</button>
       <button type="button" class="btn" id="acLogout">Esci da questo dispositivo</button>
       <button type="button" class="linkbtn" id="acDelete">Elimina l'account e i dati sul server</button>
+      <div id="acBiz" class="acbiz" hidden>
+        <h3 class="sect">MyTurn Business</h3>
+        <p class="help" id="acBizTxt"></p>
+        <div class="corow" id="acBizActs"></div>
+      </div>
     </div>
     <p class="bpst" id="acStatus" aria-live="polite" hidden></p>
     <details class="ichelp"><summary>Cosa viene salvato sul server</summary>
@@ -2713,7 +2719,7 @@ async function coLoad(){if(!BIZ||!SB_ON()||!AU)return CO;
   try{const r=await sbFetch("/rest/v1/rpc/team_mine",{body:{}});CO=Array.isArray(r)?r:[];coSave();coStrip();coPull();coLang();}catch(e){}
   coRender();return CO;}
 /* riga in Impostazioni → Account */
-function coRow(){if(!AU&&CO.length){CO=[];coSave();coStrip();}
+function coRow(){if(!AU&&CO.length){CO=[];coSave();coStrip();}try{acBizRender();}catch(e){}
   const on=BIZ&&SB_ON()&&!!AU;$("coRow").hidden=!on;if(!on)return;
   $("coLine").textContent=!CO.length?t("Azienda: nessuna"):CO.length===1?t("Azienda: {x}",{x:CO[0].team+" · "+coRoleName(CO[0].role)}):tn(CO.length,"{n} azienda","{n} aziende");}
 function coRender(){coRow();if(!$("co").open)return;const need=!SB_ON()?"off":!AU?"login":"";
@@ -2734,6 +2740,14 @@ function coRender(){coRow();if(!$("co").open)return;const need=!SB_ON()?"off":!A
     '<p class="eyebrow">'+esc(t("Non vedrà"))+"</p><ul><li>"+esc(t("note, etichette e turni che segni da te"))+"</li><li>"+esc(t("stima paga, busta paga e secondo lavoro"))+"</li></ul>"+
     '<div class="corow"><button type="button" class="btn primary" id="coJoin">'+esc(t("Entra nell'azienda"))+'</button><button type="button" class="btn ghost" id="coCancel">'+esc(t("Annulla"))+"</button></div></div>";
   $("coJoin").onclick=coJoin;$("coCancel").onclick=()=>{coPrevData=null;coRender();};}
+/* Account → Gestisci: la porta di MyTurn Business (dove è acceso; per tutti con la 3.0) */
+function acBizRender(){const on=BIZ&&SB_ON()&&!!AU;$("acBiz").hidden=!on;if(!on)return;
+  if(CO.length){$("acBizTxt").textContent=CO.length===1?t("Azienda: {x}",{x:CO[0].team+" · "+coRoleName(CO[0].role)}):tn(CO.length,"{n} azienda","{n} aziende");
+    $("acBizActs").innerHTML='<button type="button" class="btn" id="acBizOpen">'+esc(t("La mia azienda"))+"</button>";$("acBizOpen").onclick=openCo;return;}
+  $("acBizTxt").textContent=t("Per chi organizza i turni di una squadra: crei l'azienda, inviti le persone e pubblichi i turni, che arrivano nel loro calendario. Se invece un'azienda ti ha invitato, entra con il codice.");
+  $("acBizActs").innerHTML='<button type="button" class="btn primary" id="acBizNew">'+esc(t("Crea la tua azienda"))+'</button><button type="button" class="btn" id="acBizCode">'+esc(t("Entra con un codice"))+"</button>";
+  $("acBizNew").onclick=()=>{openCo();coNewOpen();showField("coTeamName");};
+  $("acBizCode").onclick=()=>{openCo();showField("coCode");};}
 function coInviteFrom(c){c=coClean(c);if(c.length!==8)return;coInvite=c;
   if(!BIZ){BIZ=true;try{localStorage.setItem(BIZ_K,"1");}catch(e){}}
   const go=()=>{if($("ob").open)return void setTimeout(go,1000);openCo();};setTimeout(go,600);}
@@ -2836,6 +2850,13 @@ async function coFind(){if(BIZ||!SB_ON()||!AU)return;let off=null,last=0;
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&AU){if(BIZ)coLoad();else coFind();}});
 setInterval(()=>{if(document.visibilityState==="visible"&&BIZ&&AU&&CO.length)coPull();},5*60e3);
 $("coBtn").onclick=openCo;$("coClose").onclick=()=>$("co").close();
+/* Nascosto fino alla 3.0: per provarlo dove non si può scrivere ?business=1 (l'app sulla Home dell'iPhone) si tocca 5 volte
+   la riga della versione in Impostazioni → Aggiornamenti; altre 5 volte lo spengono. */
+let bizTaps=[];
+$("upInfo").addEventListener("click",()=>{const n=Date.now();bizTaps=bizTaps.filter(x=>n-x<4000);bizTaps.push(n);if(bizTaps.length<5)return;bizTaps=[];
+  BIZ=!BIZ;try{localStorage.setItem(BIZ_K,BIZ?"1":"0");}catch(e){}
+  toast(BIZ?t("MyTurn Business acceso su questo dispositivo: lo trovi in Account."):t("MyTurn Business spento su questo dispositivo."));
+  renderAccount();if(BIZ&&AU)coLoad();});
 $("coGo").onclick=coPreview;$("coCode").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();coPreview();}});
 $("coCode").addEventListener("input",()=>{const v=coClean($("coCode").value),f=coFmt(v);if($("coCode").value!==f)$("coCode").value=f;if(coPrevData&&coPrevData.code!==v){coPrevData=null;coRender();}});
 $("coNewBtn").onclick=coNewOpen;$("coCreate").onclick=coCreate;

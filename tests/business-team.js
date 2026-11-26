@@ -22,6 +22,22 @@ const {USERS,DB,RPC,fake}=require('./business-fake');
   // --- 0. senza ?business=1 non c'è niente
   {const p=await device('A');await settings(p);ok(await p.isHidden('#coRow'),'nascosto senza ?business=1');ok(!p.errs.length,'nessun errore '+p.errs.join('|'));await p.context().close();}
 
+  // --- 0b. l'app sulla Home (niente ?business=1): 5 tocchi sulla versione lo accendono, e Account → Gestisci mostra MyTurn Business
+  {const p=await device('A',{w:430});await settings(p);await p.click('#acBtn');await p.waitForTimeout(300);
+    ok(await p.isHidden('#acBiz'),'Gestisci: niente MyTurn Business se è spento');await p.click('#acClose');await p.waitForTimeout(200);
+    await settings(p);for(let i=0;i<5;i++)await p.click('#upInfo');await p.waitForTimeout(200);
+    ok(/MyTurn Business acceso su questo dispositivo/.test(await p.textContent('#toast')),'5 tocchi sulla versione: '+await p.textContent('#toast'));
+    ok(await p.isVisible('#coRow'),'compare la riga Azienda in Impostazioni');
+    await p.click('#acBtn');await p.waitForTimeout(400);
+    ok(await p.isVisible('#acBiz')&&await p.isVisible('#acBizNew')&&await p.isVisible('#acBizCode'),'Gestisci: MyTurn Business con Crea la tua azienda ed Entra con un codice');
+    ok(!(await overflow(p,'#ac')).length,'Gestisci dentro lo schermo '+(await overflow(p,'#ac')).join(','));
+    await p.screenshot({path:path.join(OUT,'biz_account.png')});
+    await p.click('#acBizNew');await p.waitForTimeout(500);
+    ok(await p.evaluate(()=>document.getElementById('co').open&&!document.getElementById('ac').open)&&await p.isVisible('#coTeamName'),'Crea la tua azienda apre La mia azienda con i campi pronti');
+    await p.click('#coClose');await p.waitForTimeout(200);await settings(p);for(let i=0;i<5;i++)await p.click('#upInfo');await p.waitForTimeout(200);
+    ok(/spento/.test(await p.textContent('#toast'))&&await p.isHidden('#coRow')&&(await p.evaluate(()=>localStorage.getItem('myturn-biz')))==='0','altri 5 tocchi lo spengono');
+    ok(!p.errs.length,'nessun errore '+p.errs.join('|'));await p.context().close();}
+
   // --- 1. il titolare crea l'azienda e aggiunge Luca
   const A=await device('A',{q:'?business=1'});await settings(A);
   ok(await A.isVisible('#coRow')&&/nessuna/.test(await A.textContent('#coLine')),'riga Azienda in Impostazioni: '+await A.textContent('#coLine'));
